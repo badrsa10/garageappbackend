@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL") // Set your SQLite database path here, or use an environment variable
+}
+
+model Client {
+  id_client     String   @id @default(cuid()) // Unique client ID
+  nom           String
+  prenom        String
+  email         String   @unique
+  tel           String
+  type_personne String
+  vehiculeId    String   @unique
+  vehicule      Vehicule @relation(fields: [vehiculeId], references: [id_vehicule]) // Client references Vehicule
+}
+
+model Vehicule {
+  id_vehicule        String               @id @default(cuid()) // Unique vehicle ID
+  marque             String
+  modele             String
+  annee              Int
+  kilometrage        Int
+  matricule          String
+  numero_serie       String
+  // Removed the 'historique' field to decouple tables
+  Client             Client?
+  VehiculeHistorique VehiculeHistorique[]
+}
+
+model VehiculeHistorique {
+  id_vehicule_historique String   @id @default(cuid()) // Unique ID for history record
+  vehiculeId             String
+  date_historique        DateTime
+  serviceId              String
+  libelle_service        String
+  vehicule               Vehicule @relation(fields: [vehiculeId], references: [id_vehicule]) // References Vehicule
+  service                Service  @relation(fields: [serviceId], references: [id_service]) // References Service
+}
+
+model Service {
+  id_service         String               @id @default(cuid()) // Unique ID for service
+  libelle            String
+  // No reference back to VehiculeHistorique
+  VehiculeHistorique VehiculeHistorique[]
+}
+
+model Piece {
+  id_piece String     @id @default(cuid()) // Unique ID for the piece
+  libelle  String
+  quantite Int
+  // No reference to Commande
+  Commande Commande[]
+}
+
+model Commande {
+  id_commande   String      @id @default(cuid()) // Unique ID for the commande
+  pieceId       String
+  fournisseurId String
+  etat          String
+  quantite      Int
+  prix_unite    Float
+  prix_total    Float
+  piece         Piece       @relation(fields: [pieceId], references: [id_piece]) // References Piece
+  fournisseur   Fournisseur @relation(fields: [fournisseurId], references: [id_fournisseur]) // References Fournisseur
+}
+
+model Fournisseur {
+  id_fournisseur String     @id @default(cuid()) // Unique ID for fournisseur
+  nom            String
+  prenom         String
+  email          String     @unique
+  tel            String
+  Commande       Commande[]
+}
