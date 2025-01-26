@@ -1,0 +1,15 @@
+
+
+
+Client              => CLTYYYYMMXXXX
+Vehicule            => VEHYYYYMMXXXX
+Vehicule_historique => VHIYYYYMMXXXX
+Service             => SRVYYYYMMXXXX
+Fournisseur         => FRNYYYYMMXXXX
+Piece               => PICYYYYMMXXXX
+Commande            => COMYYYYMMXXXX
+
+
+YYYY = YEAR
+MM   = MONTH
+XXXX = NUMBER AUTO INCREMENTED

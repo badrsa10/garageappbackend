@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Client {
-  id_client     String   @id @default(cuid()) // Unique client ID
+  id_client     String   @id
   nom           String
   prenom        String
   email         String   @unique
@@ -22,20 +22,19 @@ model Client {
 }
 
 model Vehicule {
-  id_vehicule        String               @id @default(cuid()) // Unique vehicle ID
+  id_vehicule        String               @id
   marque             String
   modele             String
   annee              Int
   kilometrage        Int
   matricule          String
-  numero_serie       String
-  // Removed the 'historique' field to decouple tables
+  numeroSerie        String
   Client             Client?
   VehiculeHistorique VehiculeHistorique[]
 }
 
 model VehiculeHistorique {
-  id_vehicule_historique String   @id @default(cuid()) // Unique ID for history record
+  id_vehicule_historique String   @id
   vehiculeId             String
   date_historique        DateTime
   serviceId              String
@@ -45,14 +44,14 @@ model VehiculeHistorique {
 }
 
 model Service {
-  id_service         String               @id @default(cuid()) // Unique ID for service
+  id_service         String               @id
   libelle            String
   // No reference back to VehiculeHistorique
   VehiculeHistorique VehiculeHistorique[]
 }
 
 model Piece {
-  id_piece String     @id @default(cuid()) // Unique ID for the piece
+  id_piece String     @id
   libelle  String
   quantite Int
   // No reference to Commande
@@ -60,7 +59,7 @@ model Piece {
 }
 
 model Commande {
-  id_commande   String      @id @default(cuid()) // Unique ID for the commande
+  id_commande   String      @id
   pieceId       String
   fournisseurId String
   etat          String
@@ -72,7 +71,7 @@ model Commande {
 }
 
 model Fournisseur {
-  id_fournisseur String     @id @default(cuid()) // Unique ID for fournisseur
+  id_fournisseur String     @id
   nom            String
   prenom         String
   email          String     @unique
