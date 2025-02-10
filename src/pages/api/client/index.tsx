@@ -55,9 +55,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const filters = searchTerm
             ? {
                 OR: [
-                  { nom: { contains: searchTerm, mode: 'insensitive' } },
-                  { prenom: { contains: searchTerm, mode: 'insensitive' } },
-                  { email: { contains: searchTerm, mode: 'insensitive' } },
+                  { nom: { contains: searchTerm} },
+                  { prenom: { contains: searchTerm } },
+                  { email: { contains: searchTerm} },
                 ],
               }
             : undefined;
@@ -108,13 +108,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           email,
           tel,
           type_personne,
-          vehiculeId: vehiculeId || null, // Associate the client with a vehicle, if provided
+          //vehiculeId: vehiculeId || null, // Associate the client with a vehicle, if provided
         },
       });
 
       return res.status(201).json(newClient);
     } catch (error) {
-      console.error('Error creating client:', error);
+      //console.log(error);
       return res.status(500).json({ error: 'Failed to create client' });
     }
   } else {

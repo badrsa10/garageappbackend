@@ -11,14 +11,14 @@ datasource db {
 }
 
 model Client {
-  id_client     String   @id
+  id_client     String    @id
   nom           String
   prenom        String
-  email         String   @unique
+  email         String    @unique
   tel           String
   type_personne String
-  vehiculeId    String   @unique
-  vehicule      Vehicule @relation(fields: [vehiculeId], references: [id_vehicule]) // Client references Vehicule
+  vehiculeId    String?   @unique
+  vehicule      Vehicule? @relation(fields: [vehiculeId], references: [id_vehicule]) // Client references Vehicule
 }
 
 model Vehicule {
