@@ -15,7 +15,7 @@ const generateClientId = async () => {
         startsWith: `CLT-${year}${month}`,
       },
     },
-    
+
     orderBy: {
       id_client: 'desc',
     },
@@ -33,62 +33,78 @@ const generateClientId = async () => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    //GET
-    if (req.method === 'GET') {
-        const { page = 1, limit = 10, search = '', sortBy = 'nom', sortOrder = 'asc' } = req.query;
-      
-        const pageNumber = parseInt(page as string, 10);
-        const pageSize = parseInt(limit as string, 10);
-        const searchTerm = Array.isArray(search) ? search[0] : search; // Ensure search is a string
-        const sortFields = ['nom', 'prenom', 'email', 'type_personne'];
-        const order = sortOrder === 'desc' ? 'desc' : 'asc';
-      
-        if (isNaN(pageNumber) || isNaN(pageSize) || pageNumber < 1 || pageSize < 1) {
-          return res.status(400).json({ error: 'Invalid pagination parameters' });
-        }
-      
-        if (!sortFields.includes(sortBy as string)) {
-          return res.status(400).json({ error: 'Invalid sortBy parameter' });
-        }
-      
-        try {
-          const filters = searchTerm
-            ? {
-                OR: [
-                  { nom: { contains: searchTerm} },
-                  { prenom: { contains: searchTerm } },
-                  { email: { contains: searchTerm} },
-                ],
-              }
-            : undefined;
-      
-          const clients = await prisma.client.findMany({
-            where: filters,
-            orderBy: { [sortBy as string]: order },
-            skip: (pageNumber - 1) * pageSize,
-            take: pageSize,
-            include: { vehicule: true },
-          });
-      
-          const totalClients = await prisma.client.count({ where: filters });
-          const totalPages = Math.ceil(totalClients / pageSize);
-      
-          return res.status(200).json({
-            data: clients,
-            meta: {
-              totalClients,
-              totalPages,
-              currentPage: pageNumber,
-              pageSize,
-            },
-          });
-        } catch (error) {
-          console.error(error);
-          return res.status(500).json({ error: 'Something went wrong' });
-        }
+  //GET
+  if (req.method === 'GET') {
+
+    const { page = 1, limit = 10, search = [], sortBy = 'nom', sortOrder = 'asc' } = req.query;
+
+    const pageNumber = parseInt(page as string, 10);
+    const pageSize = parseInt(limit as string, 10);
+
+    const sortFields = ['nom', 'prenom', 'email', 'type_personne'];
+    const order = sortOrder === 'desc' ? 'desc' : 'asc';
+
+    if (isNaN(pageNumber) || isNaN(pageSize) || pageNumber < 1 || pageSize < 1) {
+      return res.status(400).json({ error: 'Invalid pagination parameters' });
     }
-    //POST
-    else if (req.method === 'POST') {
+
+    if (!sortFields.includes(sortBy as string)) {
+      return res.status(400).json({ error: 'Invalid sortBy parameter' });
+    }
+
+    try {
+      let searchTerm = Array.isArray(search) ? search : [search];
+      //console.log(search);
+      //console.log(searchTerm);
+      searchTerm = searchTerm
+        .map((term) => String(term).trim())
+        .filter((term) => term.length > 0);
+
+      let filters = {};
+
+      if (searchTerm.length > 0) {
+        filters = {
+          OR: searchTerm.map((term) => ({
+            OR: [
+              { nom: { contains: term } },
+              { prenom: { contains: term } },
+              { email: { contains: term } },
+            ],
+          })),
+        };
+      }
+      //const whereCondition = Object.keys(filters).length > 0 ? filters : undefined;
+
+      //console.log("Final whereCondition:", JSON.stringify(whereCondition, null, 2));
+
+
+      const clients = await prisma.client.findMany({
+        where: { prenom : "John"},
+        orderBy: { [sortBy as string]: order },
+        skip: (pageNumber - 1) * pageSize,
+        take: pageSize,
+        //include: { vehicule: true },
+      });
+      console.log("Clients found:", clients);
+      const totalClients = await prisma.client.count({ where: filters });
+      const totalPages = Math.ceil(totalClients / pageSize);
+
+      return res.status(200).json({
+        data: clients,
+        meta: {
+          totalClients,
+          totalPages,
+          currentPage: pageNumber,
+          pageSize,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Something went wrong' });
+    }
+  }
+  //POST
+  else if (req.method === 'POST') {
     const { nom, prenom, email, tel, type_personne, vehiculeId } = req.body;
 
     // Validate required fields
@@ -108,7 +124,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           email,
           tel,
           type_personne,
-          //vehiculeId: vehiculeId || null, // Associate the client with a vehicle, if provided
+          vehiculeId: vehiculeId || null, // Associate the client with a vehicle, if provided
         },
       });
 

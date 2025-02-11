@@ -51,7 +51,7 @@ export default async function handler(
       sortOrder = "asc",
     } = req.query;
 
-    console.log(req.query);
+    //console.log(req.query);
     const pageNumber = parseInt(page as string, 10);
     const pageSize = parseInt(limit as string, 10);
     //const searchTerm = search ? (Array.isArray(search) ? search.join(" ") : String(search)) : '';
@@ -93,7 +93,6 @@ export default async function handler(
       if (searchTerms.length > 0) {
         filters = {
           OR: searchTerms.map((term) => ({
-            //marque: { contains: term}
             OR: [
               { marque: { contains: term } },
               { modele: { contains: term } },
@@ -123,8 +122,8 @@ export default async function handler(
       return res.status(200).json({
         data: vehicules,
         meta: {
-          //totalVehicules,
-          //totalPages,
+          totalVehicules,
+          totalPages,
           currentPage: pageNumber,
           pageSize,
         },
