@@ -1,5 +1,5 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { NextApiRequest, NextApiResponse } from "next";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const generateClientId = async () => {
   const now = new Date();
   const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, "0");
 
   const lastClient = await prisma.client.findMany({
     where: {
@@ -17,7 +17,7 @@ const generateClientId = async () => {
     },
 
     orderBy: {
-      id_client: 'desc',
+      id_client: "desc",
     },
     take: 1,
   });
@@ -29,31 +29,32 @@ const generateClientId = async () => {
     increment = lastIncrement + 1;
   }
 
-  return `CLT-${year}${month}-${String(increment).padStart(4, '0')}`;
+  return `CLT-${year}${month}-${String(increment).padStart(4, "0")}`;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   //GET
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
 
-    const { page = 1, limit = 10, search = [], sortBy = 'nom', sortOrder = 'asc' } = req.query;
+    const { page = 1, limit = 10, search = [], sortBy = "nom", sortOrder = "asc" } = req.query;
 
     const pageNumber = parseInt(page as string, 10);
     const pageSize = parseInt(limit as string, 10);
 
-    const sortFields = ['nom', 'prenom', 'email', 'type_personne'];
-    const order = sortOrder === 'desc' ? 'desc' : 'asc';
+    const sortFields = ["nom", "prenom", "email", "type_personne"];
+    const order = sortOrder === "desc" ? "desc" : "asc";
 
     if (isNaN(pageNumber) || isNaN(pageSize) || pageNumber < 1 || pageSize < 1) {
-      return res.status(400).json({ error: 'Invalid pagination parameters' });
+      return res.status(400).json({ error: "Invalid pagination parameters" });
     }
 
     if (!sortFields.includes(sortBy as string)) {
-      return res.status(400).json({ error: 'Invalid sortBy parameter' });
+      return res.status(400).json({ error: "Invalid sortBy parameter" });
     }
 
     try {
-      let searchTerm = Array.isArray(search) ? search : [search];
+      let searchTerm = Array.isArray(search) ? search : search ? [search] : [];
+
       //console.log(search);
       //console.log(searchTerm);
       searchTerm = searchTerm
@@ -75,20 +76,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       //const whereCondition = Object.keys(filters).length > 0 ? filters : undefined;
 
-      //console.log("Final whereCondition:", JSON.stringify(whereCondition, null, 2));
+      console.log("Final filters:", JSON.stringify(filters, null, 2));
 
 
       const clients = await prisma.client.findMany({
-        where: { prenom : "John"},
+        where: filters,
         orderBy: { [sortBy as string]: order },
         skip: (pageNumber - 1) * pageSize,
         take: pageSize,
         //include: { vehicule: true },
       });
-      console.log("Clients found:", clients);
-      const totalClients = await prisma.client.count({ where: filters });
-      const totalPages = Math.ceil(totalClients / pageSize);
 
+      console.log("Clients found:", clients);
+
+      const totalClients = await prisma.client.count({ where: filters });
+      console.log("totalClients: ",totalClients);
+      const totalPages = Math.ceil(totalClients / pageSize);
+      console.log("totalPages: ",totalPages);
       return res.status(200).json({
         data: clients,
         meta: {
@@ -100,16 +104,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: 'Something went wrong' });
+      return res.status(500).json({ error: "Something went wrong" });
     }
   }
   //POST
-  else if (req.method === 'POST') {
+  else if (req.method === "POST") {
     const { nom, prenom, email, tel, type_personne, vehiculeId } = req.body;
 
     // Validate required fields
     if (!nom || !prenom || !email || !tel || !type_personne) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     try {
@@ -131,7 +135,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(201).json(newClient);
     } catch (error) {
       //console.log(error);
-      return res.status(500).json({ error: 'Failed to create client' });
+      return res.status(500).json({ error: "Failed to create client" });
     }
   } else {
     return res.status(405).json({ error: `Method ${req.method} Not Allowed` });

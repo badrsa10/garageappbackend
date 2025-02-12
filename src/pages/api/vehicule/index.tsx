@@ -102,6 +102,7 @@ export default async function handler(
           })),
         };
       }
+      console.log("Final filters:", JSON.stringify(filters, null, 2));
       //console.log(JSON.stringify(filters, null, 4));
       //console.log(new Date());
       const vehicules = await prisma.vehicule.findMany({
