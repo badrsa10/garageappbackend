@@ -28,19 +28,19 @@ model Vehicule {
   annee              Int
   kilometrage        Int
   matricule          String
-  numeroSerie        String
+  numeroSerie        String?
   Client             Client?
   VehiculeHistorique VehiculeHistorique[]
 }
 
 model VehiculeHistorique {
-  id_vehicule_historique String   @id
-  vehiculeId             String
+  id_vehicule_historique String    @id
+  vehiculeId             String?
   date_historique        DateTime
-  serviceId              String
-  libelle_service        String
-  vehicule               Vehicule @relation(fields: [vehiculeId], references: [id_vehicule]) // References Vehicule
-  service                Service  @relation(fields: [serviceId], references: [id_service]) // References Service
+  serviceId              String?
+  libelle_service        String?
+  vehicule               Vehicule? @relation(fields: [vehiculeId], references: [id_vehicule]) // References Vehicule
+  service                Service?  @relation(fields: [serviceId], references: [id_service]) // References Service
 }
 
 model Service {

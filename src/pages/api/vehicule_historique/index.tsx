@@ -57,13 +57,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         filters = {
           OR: searchTerms.map((term) => ({
             OR: [
-              { libelle_service: { contains: term, mode: "insensitive" } },
-              { serviceId: { contains: term, mode: "insensitive" } },
-              { vehiculeId: { contains: term, mode: "insensitive" } },
+              { libelle_service: { contains: term} },
+              { serviceId: { contains: term} },
+              { vehiculeId: { contains: term} },
             ],
           })),
         };
       }
+      
 
       const historiques = await prisma.vehiculeHistorique.findMany({
         where: filters,
@@ -102,14 +103,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const id_vehicule_historique = await generateHistoriqueId();
       console.log("id_vehicule_historique ",id_vehicule_historique);
       console.log("vehiculeId ",vehiculeId);
-      console.log("date_historique ",date_historique);
+      console.log("date_historique ",new Date(date_historique));
       console.log("serviceId ",serviceId);
       console.log("libelle_service ",libelle_service);
+      //Create
       const newHistorique = await prisma.vehiculeHistorique.create({
         data: {
           id_vehicule_historique,
           vehiculeId,
-          date_historique: new Date(),//new Date(date_historique),
+          date_historique : new Date(date_historique),
           serviceId,
           libelle_service,
         },
@@ -117,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log(" NewHistorique : ",JSON.stringify(newHistorique, null, 4));
       return res.status(201).json(newHistorique);
     } catch (error) {
-      console.error("Error details:", error);
+      console.error("Error details:", JSON.stringify(error, null, 4));
       return res.status(500).json({ error: "Failed to create historique" });
     }
   } else {
