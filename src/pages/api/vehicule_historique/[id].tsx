@@ -1,80 +1,80 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '../../../lib/prisma'; 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
-  const historiqueId = id as string;
-
-  if (!historiqueId) {
-    return res.status(400).json({ error: "Invalid historique ID" });
-  }
-
-  if (req.method === "GET") {
+  if (req.method === 'GET') {
     try {
       const historique = await prisma.vehiculeHistorique.findUnique({
-        where: { id_vehicule_historique: historiqueId },
+        where: { id_vehicule_historique: id as string },
         include: {
-          vehicule: true, // Inclure les informations du véhicule
-          service: true, // Inclure les informations du service
+          vehicule: true,
+          service: true,
+          piece: true,
         },
       });
 
       if (!historique) {
-        return res.status(404).json({ error: "Historique not found" });
+        return res.status(404).json({ error: 'Historique not found' });
       }
 
       return res.status(200).json(historique);
     } catch (error) {
-      console.error("Error details:", error);
-      return res.status(500).json({ error: "Something went wrong" });
+      console.error('Error details:', error);
+      return res.status(500).json({ error: 'Something went wrong' });
     }
-  }
+  } else if (req.method === 'PUT') {
+    const {
+      vehiculeId,
+      date_historique,
+      kilometrage,
+      pieceId,
+      serviceId,
+      libelle_pieceouservice,
+      remarque,
+    } = req.body;
 
-  // PUT - Update an existing historical record
-  else if (req.method === "PUT") {
-    const { vehiculeId, date_historique, serviceId, libelle_service } = req.body;
-
-    if (!vehiculeId || !date_historique || !serviceId || !libelle_service) {
-      return res.status(400).json({ error: "Missing required fields" });
+    if (!vehiculeId || !date_historique || (!pieceId && !serviceId)) {
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
+      // Validate if only one of pieceId or serviceId is provided
+      if (pieceId && serviceId) {
+        return res.status(400).json({ error: 'Provide either pieceId or serviceId, not both' });
+      }
+
       const updatedHistorique = await prisma.vehiculeHistorique.update({
-        where: { id_vehicule_historique: historiqueId },
+        where: { id_vehicule_historique: id as string },
         data: {
           vehiculeId,
           date_historique: new Date(date_historique),
-          serviceId,
-          libelle_service,
+          kilometrage: kilometrage ? parseInt(kilometrage, 10) : null,
+          pieceId: pieceId || null,
+          serviceId: serviceId || null,
+          libelle_pieceouservice,
+          remarque,
         },
       });
 
       return res.status(200).json(updatedHistorique);
     } catch (error) {
-      console.error("Error details:", error);
-      return res.status(500).json({ error: "Failed to update historique" });
+      console.error('Error details:', JSON.stringify(error, null, 4));
+      return res.status(500).json({ error: 'Failed to update historique' });
     }
-  }
-
-  // DELETE - Delete the historical record
-  else if (req.method === "DELETE") {
+  } else if (req.method === 'DELETE') {
     try {
-      const deletedHistorique = await prisma.vehiculeHistorique.delete({
-        where: { id_vehicule_historique: historiqueId },
+      await prisma.vehiculeHistorique.delete({
+        where: { id_vehicule_historique: id as string },
       });
 
-      return res.status(200).json({ message: "Historique deleted successfully", data: deletedHistorique });
+      return res.status(204).end(); // No Content
     } catch (error) {
-      console.error("Error details:", error);
-      return res.status(500).json({ error: "Failed to delete historique" });
+      console.error('Error details:', JSON.stringify(error, null, 4));
+      return res.status(500).json({ error: 'Failed to delete historique' });
     }
-  }
-
-  // Handle unsupported HTTP methods
-  else {
-    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+  } else {
+    return res.status(405).end(); // Method Not Allowed
   }
 }

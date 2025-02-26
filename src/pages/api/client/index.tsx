@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from '../../../lib/prisma'; 
 
 // Function to generate a unique client ID
 const generateClientId = async () => {

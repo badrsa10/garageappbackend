@@ -37,10 +37,14 @@ model VehiculeHistorique {
   id_vehicule_historique String    @id
   vehiculeId             String?
   date_historique        DateTime
+  kilometrage            Int?
+  pieceId                String?
   serviceId              String?
-  libelle_service        String?
+  libelle_pieceouservice String?
+  remarque               String?
   vehicule               Vehicule? @relation(fields: [vehiculeId], references: [id_vehicule]) // References Vehicule
   service                Service?  @relation(fields: [serviceId], references: [id_service]) // References Service
+  piece                  Piece?    @relation(fields: [pieceId], references: [id_piece]) // References Piece
 }
 
 model Service {
@@ -51,18 +55,19 @@ model Service {
 }
 
 model Piece {
-  id_piece String     @id
-  libelle  String
-  quantite Int
+  id_piece           String               @id
+  libelle            String
+  quantite           Int
   // No reference to Commande
-  Commande Commande[]
+  Commande           Commande[]
+  VehiculeHistorique VehiculeHistorique[]
 }
 
 model Commande {
   id_commande   String      @id
   pieceId       String
   fournisseurId String
-  etat          String
+  etat          String?
   quantite      Int
   prix_unite    Float
   prix_total    Float
@@ -77,4 +82,11 @@ model Fournisseur {
   email          String     @unique
   tel            String
   Commande       Commande[]
+}
+
+model MarqueModel {
+  marque String
+  model  String
+
+  @@id([marque, model])
 }

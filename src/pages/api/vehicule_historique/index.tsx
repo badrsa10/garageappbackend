@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from '../../../lib/prisma'; 
 
 const generateHistoriqueId = async () => {
   const now = new Date();
@@ -30,17 +28,69 @@ const generateHistoriqueId = async () => {
   return `VHI-${year}${month}-${String(increment).padStart(4, "0")}`;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // GET
+/**
+ * Function to fetch libelle_pieceouservice based on pieceId or serviceId
+ */
+const getPieceOuServiceLibelle = async (
+  pieceouserviceId: string,
+  res: NextApiResponse
+) => {
+  if (pieceouserviceId.startsWith("SRV")) {
+    const service = await prisma.service.findUnique({
+      where: { id_service: pieceouserviceId },
+      select: { libelle: true },
+    });
+    if (!service) {
+      return res
+        .status(400)
+        .json({ error: "Invalid serviceId, libelle_service not found" });
+    }
+    return service.libelle;
+  } else if (pieceouserviceId.startsWith("PIC")) {
+    const piece = await prisma.piece.findUnique({
+      where: { id_piece: pieceouserviceId },
+      select: { libelle: true },
+    });
+    if (!piece) {
+      return res
+        .status(400)
+        .json({ error: "Invalid pieceId, libelle_piece not found" });
+    }
+    return piece.libelle;
+  }
+  return res.status(400).json({ error: "Invalid pieceouserviceId format" });
+};
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === "GET") {
-    const { page = 1, limit = 10, search = [], sortBy = "date_historique", sortOrder = "asc" } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = [],
+      sortBy = "date_historique",
+      sortOrder = "asc",
+    } = req.query;
 
     const pageNumber = parseInt(page as string, 10);
     const pageSize = parseInt(limit as string, 10);
-    const sortFields = ["date_historique", "libelle_service", "serviceId", "vehiculeId"];
+    const sortFields = [
+      "date_historique",
+      "libelle_pieceouservice",
+      "pieceId",
+      "serviceId",
+      "vehiculeId",
+    ];
     const order = sortOrder === "desc" ? "desc" : "asc";
 
-    if (isNaN(pageNumber) || isNaN(pageSize) || pageNumber < 1 || pageSize < 1) {
+    if (
+      isNaN(pageNumber) ||
+      isNaN(pageSize) ||
+      pageNumber < 1 ||
+      pageSize < 1
+    ) {
       return res.status(400).json({ error: "Invalid pagination parameters" });
     }
 
@@ -50,21 +100,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       let searchTerms = Array.isArray(search) ? search : [search];
-      searchTerms = searchTerms.map((term) => String(term).trim()).filter((term) => term.length > 0);
+      searchTerms = searchTerms
+        .map((term) => String(term).trim())
+        .filter((term) => term.length > 0);
 
       let filters = {};
       if (searchTerms.length > 0) {
         filters = {
           OR: searchTerms.map((term) => ({
             OR: [
-              { libelle_service: { contains: term} },
-              { serviceId: { contains: term} },
-              { vehiculeId: { contains: term} },
+              {
+                libelle_pieceouservice: { contains: term, mode: "insensitive" },
+              },
+              { remarque: { contains: term, mode: "insensitive" } },
+              { vehiculeId: { contains: term, mode: "insensitive" } },
             ],
           })),
         };
       }
-      
 
       const historiques = await prisma.vehiculeHistorique.findMany({
         where: filters,
@@ -73,7 +126,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         take: pageSize,
       });
 
-      const totalHistoriques = await prisma.vehiculeHistorique.count({ where: filters });
+      const totalHistoriques = await prisma.vehiculeHistorique.count({
+        where: filters,
+      });
       const totalPages = Math.ceil(totalHistoriques / pageSize);
 
       return res.status(200).json({
@@ -89,34 +144,67 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error("Error details:", error);
       return res.status(500).json({ error: "Something went wrong" });
     }
-  }
-  // POST
-  else if (req.method === "POST") {
-    const { vehiculeId, date_historique, serviceId, libelle_service } = req.body;
-    console.log("req.body : ",JSON.stringify(req.body, null, 4));
+  } else if (req.method === "POST") {
+    const {
+      vehiculeId,
+      date_historique,
+      kilometrage,
+      pieceId,
+      serviceId,
+      libelle_pieceouservice,
+      remarque,
+    } = req.body;
 
-    if (!vehiculeId || !date_historique || !serviceId || !libelle_service) {
+    if (!vehiculeId || !date_historique || (!pieceId && !serviceId)) {
       return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Validate if only one of pieceId or serviceId is provided
+    if (pieceId && serviceId) {
+      return res
+        .status(400)
+        .json({ error: "Provide either pieceId or serviceId, not both" });
+    }
+
+    // Validate data types
+    if (
+      typeof vehiculeId !== "string" ||
+      isNaN(Date.parse(date_historique)) ||
+      (kilometrage !== undefined && typeof kilometrage !== "number") ||
+      (pieceId !== null && typeof pieceId !== "string") ||
+      (serviceId !== null && typeof serviceId !== "string")
+    ) {
+      return res.status(400).json({ error: "Invalid data types" });
     }
 
     try {
       const id_vehicule_historique = await generateHistoriqueId();
-      console.log("id_vehicule_historique ",id_vehicule_historique);
-      console.log("vehiculeId ",vehiculeId);
-      console.log("date_historique ",new Date(date_historique));
-      console.log("serviceId ",serviceId);
-      console.log("libelle_service ",libelle_service);
-      //Create
+
+      // Determine final libelle_pieceouservice
+      let finalLibellePieceOuService =
+        libelle_pieceouservice && libelle_pieceouservice.trim() !== ""
+          ? libelle_pieceouservice
+          : await getPieceOuServiceLibelle(pieceId || serviceId, res);
+
+      // The function will handle errors and return a response, so we only proceed if finalLibellePieceOuService is valid
+      if (typeof finalLibellePieceOuService !== "string") {
+        return; // The error response is already sent by the helper function
+      }
+
       const newHistorique = await prisma.vehiculeHistorique.create({
         data: {
           id_vehicule_historique,
           vehiculeId,
-          date_historique : new Date(date_historique),
+          date_historique: new Date(date_historique),
+          kilometrage:
+            kilometrage !== undefined ? parseInt(kilometrage, 10) : null,
+          pieceId,
           serviceId,
-          libelle_service,
+          libelle_pieceouservice: finalLibellePieceOuService,
+          remarque,
         },
       });
-      console.log(" NewHistorique : ",JSON.stringify(newHistorique, null, 4));
+
       return res.status(201).json(newHistorique);
     } catch (error) {
       console.error("Error details:", JSON.stringify(error, null, 4));
