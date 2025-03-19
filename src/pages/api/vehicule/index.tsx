@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from '../../../lib/prisma'; 
+import prisma from "../../../lib/prisma";
 
 const generateVehiculeId = async () => {
   const now = new Date();
@@ -74,6 +74,7 @@ export default async function handler(
     }
 
     if (!sortFields.includes(sortBy as string)) {
+      console.log("sort field ",sortBy)
       return res.status(400).json({ error: "Invalid sortBy parameter" });
     }
     try {

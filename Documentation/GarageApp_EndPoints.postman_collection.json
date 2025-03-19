@@ -1,0 +1,1097 @@
+{
+	"info": {
+		"_postman_id": "f70bea30-a95e-406e-9862-e5715022c17d",
+		"name": "GarageApp_EndPoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6168329"
+	},
+	"item": [
+		{
+			"name": "Client",
+			"item": [
+				{
+					"name": "getWithParams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/client?search=Blanc&sortBy=nom&sortOrder=desc&page=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"client"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Blanc"
+								},
+								{
+									"key": "sortBy",
+									"value": "nom"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllClients",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/client?search=Nina",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"client"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Nina"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getClientById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/client?search=Nina",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"client"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Nina"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setClient",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Blanc\",\n    \"prenom\": \"Tom\",\n    \"email\": \"tom.blanc@example.com\",\n    \"tel\": \"0765432198\",\n    \"type_personne\": \"R\",\n    \"vehiculeId\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/client",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"client"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateClient",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n    \"tel\": \"0765432198\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/client/CLT-202501-0010",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"client",
+								"CLT-202501-0010"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteClient",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/client/CLT-202501-0010",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"client",
+								"CLT-202501-0010"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehicule",
+			"item": [
+				{
+					"name": "getWithParams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/vehicule?search=Mercedes&sortBy=annee&sortOrder=desc&page=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Mercedes"
+								},
+								{
+									"key": "sortBy",
+									"value": "annee"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllVehicules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/vehicule",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getVehiculeById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/vehicule?search=Audi&search=Kia",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Audi"
+								},
+								{
+									"key": "search",
+									"value": "Kia"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setVehicule",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"marque\": \"Audi\",\n    \"modele\": \"A4\",\n    \"annee\": 2017,\n    \"kilometrage\": 72000,\n    \"matricule\": \"FG-987-MN\",\n    \"numeroSerie\": \"WAUENAF42KA123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/vehicule",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifyVehicule",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroSerie\": \"WAUENAF42KA123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/vehicule/VEH-202502-0005",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule",
+								"VEH-202502-0005"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteVehicule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/vehicule/VEH-202502-0005",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule",
+								"VEH-202502-0005"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehicule_historique",
+			"item": [
+				{
+					"name": "getWithParams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/vehicule_historique?search=paration&sortBy=date_historique&sortOrder=desc&page=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule_historique"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "paration"
+								},
+								{
+									"key": "sortBy",
+									"value": "date_historique"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllVehiculeHistoriques",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehiculeId\": \"VEH-202502-0005\",\n    \"date_historique\": \"2022-06-15T00:00:00.000Z\",\n    \"kilometrage\": 20000.00,\n    \"pieceId\": null,\n    \"serviceId\": \"SRV-202502-0007\",\n    \"libelle_pieceouservice\": null,\n    \"remarque\": \"Réparation\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/vehicule_historique/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule_historique",
+								""
+							]
+						},
+						"description": "This endpoint retrieves the historical data for a specific vehicle identified by the ID \"VHI-202502-0002\".\n\n### Request\n\n- Method: GET\n- Endpoint: `localhost:3000/api/vehicule_historique/VHI-202502-0002`\n- Request Body (raw, JSON):\n    \n    ``` json\n      {\n          \"vehiculeId\": \"VEH-202502-0005\",\n          \"date_historique\": \"2022-06-15T00:00:00.000Z\",\n          \"kilometrage\": 20000,\n          \"pieceId\": null,\n          \"serviceId\": \"SRV-202502-0007\",\n          \"libelle_pieceouservice\": null,\n          \"remarque\": \"Réparation\"\n      }\n    \n     ```\n    \n\n### Response\n\nThe response is in JSON format and follows the schema below:\n\n``` json\n{\n    \"id_vehicule_historique\": \"\",\n    \"vehiculeId\": \"\",\n    \"date_historique\": \"\",\n    \"kilometrage\": 0,\n    \"pieceId\": null,\n    \"serviceId\": \"\",\n    \"libelle_pieceouservice\": \"\",\n    \"remarque\": \"\",\n    \"vehicule\": {\n        \"id_vehicule\": \"\",\n        \"marque\": \"\",\n        \"modele\": \"\",\n        \"annee\": 0,\n        \"kilometrage\": 0,\n        \"matricule\": \"\",\n        \"numeroSerie\": \"\"\n    },\n    \"service\": {\n        \"id_service\": \"\",\n        \"libelle\": \"\"\n    },\n    \"piece\": null\n}\n\n ```\n\nThe response schema includes various fields related to the vehicle historical data, including vehicle ID, date, mileage, service details, and remarks. The \"vehicule\" object provides additional details about the vehicle, while the \"service\" object includes information about the service related to the historical record."
+					},
+					"response": []
+				},
+				{
+					"name": "getVehiculeHistoriqueById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehiculeId\": \"VEH-202502-0005\",\n    \"date_historique\": \"2022-06-15T00:00:00.000Z\",\n    \"kilometrage\": 20000.00,\n    \"pieceId\": null,\n    \"serviceId\": \"SRV-202502-0007\",\n    \"libelle_pieceouservice\": null,\n    \"remarque\": \"Réparation\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/vehicule_historique/VHI-202502-0002",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule_historique",
+								"VHI-202502-0002"
+							]
+						},
+						"description": "This endpoint retrieves the historical data for a specific vehicle identified by the ID \"VHI-202502-0002\".\n\n### Request\n\n- Method: GET\n- Endpoint: `localhost:3000/api/vehicule_historique/VHI-202502-0002`\n- Request Body (raw, JSON):\n    \n    ``` json\n      {\n          \"vehiculeId\": \"VEH-202502-0005\",\n          \"date_historique\": \"2022-06-15T00:00:00.000Z\",\n          \"kilometrage\": 20000,\n          \"pieceId\": null,\n          \"serviceId\": \"SRV-202502-0007\",\n          \"libelle_pieceouservice\": null,\n          \"remarque\": \"Réparation\"\n      }\n    \n     ```\n    \n\n### Response\n\nThe response is in JSON format and follows the schema below:\n\n``` json\n{\n    \"id_vehicule_historique\": \"\",\n    \"vehiculeId\": \"\",\n    \"date_historique\": \"\",\n    \"kilometrage\": 0,\n    \"pieceId\": null,\n    \"serviceId\": \"\",\n    \"libelle_pieceouservice\": \"\",\n    \"remarque\": \"\",\n    \"vehicule\": {\n        \"id_vehicule\": \"\",\n        \"marque\": \"\",\n        \"modele\": \"\",\n        \"annee\": 0,\n        \"kilometrage\": 0,\n        \"matricule\": \"\",\n        \"numeroSerie\": \"\"\n    },\n    \"service\": {\n        \"id_service\": \"\",\n        \"libelle\": \"\"\n    },\n    \"piece\": null\n}\n\n ```\n\nThe response schema includes various fields related to the vehicle historical data, including vehicle ID, date, mileage, service details, and remarks. The \"vehicule\" object provides additional details about the vehicle, while the \"service\" object includes information about the service related to the historical record."
+					},
+					"response": []
+				},
+				{
+					"name": "setVehiculeHistorique",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehiculeId\": \"VEH-202502-0005\",\n    \"date_historique\": \"2022-06-15T00:00:00.000Z\",\n    \"kilometrage\": 20000.00,\n    \"pieceId\": null,\n    \"serviceId\": \"SRV-202502-0007\",\n    \"libelle_pieceouservice\": null,\n    \"remarque\": \"Réparation\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/vehicule_historique",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule_historique"
+							]
+						},
+						"description": "This endpoint retrieves the historical data for a specific vehicle identified by the ID \"VHI-202502-0002\".\n\n### Request\n\n- Method: GET\n- Endpoint: `localhost:3000/api/vehicule_historique/VHI-202502-0002`\n- Request Body (raw, JSON):\n    \n    ``` json\n      {\n          \"vehiculeId\": \"VEH-202502-0005\",\n          \"date_historique\": \"2022-06-15T00:00:00.000Z\",\n          \"kilometrage\": 20000,\n          \"pieceId\": null,\n          \"serviceId\": \"SRV-202502-0007\",\n          \"libelle_pieceouservice\": null,\n          \"remarque\": \"Réparation\"\n      }\n    \n     ```\n    \n\n### Response\n\nThe response is in JSON format and follows the schema below:\n\n``` json\n{\n    \"id_vehicule_historique\": \"\",\n    \"vehiculeId\": \"\",\n    \"date_historique\": \"\",\n    \"kilometrage\": 0,\n    \"pieceId\": null,\n    \"serviceId\": \"\",\n    \"libelle_pieceouservice\": \"\",\n    \"remarque\": \"\",\n    \"vehicule\": {\n        \"id_vehicule\": \"\",\n        \"marque\": \"\",\n        \"modele\": \"\",\n        \"annee\": 0,\n        \"kilometrage\": 0,\n        \"matricule\": \"\",\n        \"numeroSerie\": \"\"\n    },\n    \"service\": {\n        \"id_service\": \"\",\n        \"libelle\": \"\"\n    },\n    \"piece\": null\n}\n\n ```\n\nThe response schema includes various fields related to the vehicle historical data, including vehicle ID, date, mileage, service details, and remarks. The \"vehicule\" object provides additional details about the vehicle, while the \"service\" object includes information about the service related to the historical record."
+					},
+					"response": []
+				},
+				{
+					"name": "modifyVehiculeHistorisque",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"remarque\": \"Réparation\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/vehicule_historique/VHI-202502-0002",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule_historique",
+								"VHI-202502-0002"
+							]
+						},
+						"description": "This endpoint retrieves the historical data for a specific vehicle identified by the ID \"VHI-202502-0002\".\n\n### Request\n\n- Method: GET\n- Endpoint: `localhost:3000/api/vehicule_historique/VHI-202502-0002`\n- Request Body (raw, JSON):\n    \n    ``` json\n      {\n          \"vehiculeId\": \"VEH-202502-0005\",\n          \"date_historique\": \"2022-06-15T00:00:00.000Z\",\n          \"kilometrage\": 20000,\n          \"pieceId\": null,\n          \"serviceId\": \"SRV-202502-0007\",\n          \"libelle_pieceouservice\": null,\n          \"remarque\": \"Réparation\"\n      }\n    \n     ```\n    \n\n### Response\n\nThe response is in JSON format and follows the schema below:\n\n``` json\n{\n    \"id_vehicule_historique\": \"\",\n    \"vehiculeId\": \"\",\n    \"date_historique\": \"\",\n    \"kilometrage\": 0,\n    \"pieceId\": null,\n    \"serviceId\": \"\",\n    \"libelle_pieceouservice\": \"\",\n    \"remarque\": \"\",\n    \"vehicule\": {\n        \"id_vehicule\": \"\",\n        \"marque\": \"\",\n        \"modele\": \"\",\n        \"annee\": 0,\n        \"kilometrage\": 0,\n        \"matricule\": \"\",\n        \"numeroSerie\": \"\"\n    },\n    \"service\": {\n        \"id_service\": \"\",\n        \"libelle\": \"\"\n    },\n    \"piece\": null\n}\n\n ```\n\nThe response schema includes various fields related to the vehicle historical data, including vehicle ID, date, mileage, service details, and remarks. The \"vehicule\" object provides additional details about the vehicle, while the \"service\" object includes information about the service related to the historical record."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteVehiculeHistorisque",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/vehicule_historique/VHI-202502-0002",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicule_historique",
+								"VHI-202502-0002"
+							]
+						},
+						"description": "This endpoint retrieves the historical data for a specific vehicle identified by the ID \"VHI-202502-0002\".\n\n### Request\n\n- Method: GET\n- Endpoint: `localhost:3000/api/vehicule_historique/VHI-202502-0002`\n- Request Body (raw, JSON):\n    \n    ``` json\n      {\n          \"vehiculeId\": \"VEH-202502-0005\",\n          \"date_historique\": \"2022-06-15T00:00:00.000Z\",\n          \"kilometrage\": 20000,\n          \"pieceId\": null,\n          \"serviceId\": \"SRV-202502-0007\",\n          \"libelle_pieceouservice\": null,\n          \"remarque\": \"Réparation\"\n      }\n    \n     ```\n    \n\n### Response\n\nThe response is in JSON format and follows the schema below:\n\n``` json\n{\n    \"id_vehicule_historique\": \"\",\n    \"vehiculeId\": \"\",\n    \"date_historique\": \"\",\n    \"kilometrage\": 0,\n    \"pieceId\": null,\n    \"serviceId\": \"\",\n    \"libelle_pieceouservice\": \"\",\n    \"remarque\": \"\",\n    \"vehicule\": {\n        \"id_vehicule\": \"\",\n        \"marque\": \"\",\n        \"modele\": \"\",\n        \"annee\": 0,\n        \"kilometrage\": 0,\n        \"matricule\": \"\",\n        \"numeroSerie\": \"\"\n    },\n    \"service\": {\n        \"id_service\": \"\",\n        \"libelle\": \"\"\n    },\n    \"piece\": null\n}\n\n ```\n\nThe response schema includes various fields related to the vehicle historical data, including vehicle ID, date, mileage, service details, and remarks. The \"vehicule\" object provides additional details about the vehicle, while the \"service\" object includes information about the service related to the historical record."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Fournisseur",
+			"item": [
+				{
+					"name": "getWithParams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/fournisseur?search=Dupont&sortBy=nom&sortOrder=desc&page=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"fournisseur"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Dupont"
+								},
+								{
+									"key": "sortBy",
+									"value": "nom"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllFournisseurs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/fournisseur/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"fournisseur",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getFournisseurById",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "setFournisseur",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Dupont\",\n    \"prenom\": \"Pierre\",\n    \"email\": \"pierre.dupont@example.com\",\n    \"tel\": \"0123456123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/fournisseur",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"fournisseur"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifyFournisseur",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tel\": \"0123456123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/fournisseur/FRN-202502-0001",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"fournisseur",
+								"FRN-202502-0001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteFournisseur",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/fournisseur/FRN-202502-0001",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"fournisseur",
+								"FRN-202502-0001"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Piece",
+			"item": [
+				{
+					"name": "getWithParams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/piece?search=Amortisseur&sortBy=quantite&sortOrder=desc&page=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"piece"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Amortisseur"
+								},
+								{
+									"key": "sortBy",
+									"value": "quantite"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllPieces",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/piece",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"piece"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPieceById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/piece/PIC-202502-0006",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"piece",
+								"PIC-202502-0006"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setPiece",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"libelle\": \"Amortisseur\",\n    \"quantite\": 25\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/piece",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"piece"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifyPiece",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"quantite\": 25\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/piece/PIC-202502-0006",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"piece",
+								"PIC-202502-0006"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deletePiece",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/piece/PIC-202502-0006",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"piece",
+								"PIC-202502-0006"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service",
+			"item": [
+				{
+					"name": "getWithParams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/piece?search=de&sortBy=libelle&sortOrder=desc&page=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"piece"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "de"
+								},
+								{
+									"key": "sortBy",
+									"value": "libelle"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllServices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/service",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"service"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getServiceById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/service/SRV-202502-0007",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"service",
+								"SRV-202502-0007"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setService",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"libelle\": \"Réparation du moteur\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/service",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"service"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifyService",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"libelle\": \"Réparation du moteur\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/service/SRV-202502-0007",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"service",
+								"SRV-202502-0007"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteService",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/service/SRV-202502-0007",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"service",
+								"SRV-202502-0007"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Commande",
+			"item": [
+				{
+					"name": "commande",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/commande",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"commande"
+							]
+						},
+						"description": "### GET /api/commande\n\nThis endpoint retrieves the list of commandes.\n\n#### Response\n\nThe response is in JSON format and has the following schema:\n\n``` json\n{\n    \"data\": [],\n    \"meta\": {\n        \"totalCommandes\": 0,\n        \"totalPages\": 0,\n        \"currentPage\": 0,\n        \"pageSize\": 0\n    }\n}\n\n ```\n\nThe `data` field contains an array of commandes, and the `meta` field provides information about the total number of commandes, total pages, current page, and page size."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
