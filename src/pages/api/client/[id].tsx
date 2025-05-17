@@ -8,9 +8,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Fetch a specific client
     const client = await prisma.client.findUnique({
       where: { id_client: String(id) },
-      include: { vehicule: true },
+      //include: { vehicule: true },
     });
-
     return res.status(200).json(client);
   } 
   //PUT

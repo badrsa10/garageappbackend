@@ -133,6 +133,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(201).json(newClient);
     } catch (error) {
       //console.log(error);
+       console.log("ERROR : ",JSON.stringify(error, null, 4));
       return res.status(500).json({ error: "Failed to create client" });
     }
   } else {

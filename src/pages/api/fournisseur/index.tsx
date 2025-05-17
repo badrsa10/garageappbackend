@@ -22,6 +22,7 @@ const generateFournisseurId = async () => {
 
   let increment = 1;
   if (lastFournisseur.length > 0) {
+    console.log("Last Fournisseur : ", JSON.stringify(lastFournisseur, null, 4));
     const lastId = lastFournisseur[0].id_fournisseur;
     const lastIncrement = parseInt(lastId.slice(-4), 10);
     increment = lastIncrement + 1;
@@ -93,7 +94,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
     } catch (error) {
-      console.error("Error details:", error);
+      console.error("Error details:", JSON.stringify(error, null, 4));
+      //console.log("Last Fournisseur : ", JSON.stringify(lastFournisseur, null, 4));
       return res.status(500).json({ error: "Something went wrong" });
     }
   }
@@ -101,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // POST function to create a new fournisseur
   else if (req.method === "POST") {
     const { nom, prenom, email, tel } = req.body;
-    console.log("req.body : ", JSON.stringify(req.body, null, 4));
+    //console.log("req.body : ", JSON.stringify(req.body, null, 4));
 
     // Validate if all required fields are provided
     if (!nom || !prenom || !email || !tel) {

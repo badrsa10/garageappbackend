@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
       const vehicule = await prisma.vehicule.findUnique({
         where: { id_vehicule: String(id) },
-        include: { Client: true, VehiculeHistorique: true },
+        include: { client: true, VehiculeHistorique: true },
       });
 
       if (!vehicule) return res.status(404).json({ error: 'Vehicule not found' });

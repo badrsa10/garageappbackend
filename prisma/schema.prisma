@@ -1,24 +1,21 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL") // Set your SQLite database path here, or use an environment variable
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Client {
-  id_client     String    @id
+  id_client     String     @id
   nom           String
   prenom        String
-  email         String    @unique
-  tel           String
-  type_personne String
-  vehiculeId    String?   @unique
-  vehicule      Vehicule? @relation(fields: [vehiculeId], references: [id_vehicule]) // Client references Vehicule
+  email         String?    @unique
+  tel           String?
+  type_personne String?
+  vehiculeId    String?    @unique
+  vehicule      Vehicule[]
 }
 
 model Vehicule {
@@ -29,7 +26,8 @@ model Vehicule {
   kilometrage        Int
   matricule          String
   numeroSerie        String?
-  Client             Client?
+  clientId           String?
+  client             Client?              @relation(fields: [clientId], references: [id_client])
   VehiculeHistorique VehiculeHistorique[]
 }
 
@@ -42,15 +40,14 @@ model VehiculeHistorique {
   serviceId              String?
   libelle_pieceouservice String?
   remarque               String?
-  vehicule               Vehicule? @relation(fields: [vehiculeId], references: [id_vehicule]) // References Vehicule
-  service                Service?  @relation(fields: [serviceId], references: [id_service]) // References Service
-  piece                  Piece?    @relation(fields: [pieceId], references: [id_piece]) // References Piece
+  vehicule               Vehicule? @relation(fields: [vehiculeId], references: [id_vehicule])
+  service                Service?  @relation(fields: [serviceId], references: [id_service])
+  piece                  Piece?    @relation(fields: [pieceId], references: [id_piece])
 }
 
 model Service {
   id_service         String               @id
   libelle            String
-  // No reference back to VehiculeHistorique
   VehiculeHistorique VehiculeHistorique[]
 }
 
@@ -58,21 +55,36 @@ model Piece {
   id_piece           String               @id
   libelle            String
   quantite           Int
-  // No reference to Commande
-  Commande           Commande[]
+  CommandeLine       CommandeLine[]
   VehiculeHistorique VehiculeHistorique[]
 }
 
+enum CommandeEtat {
+  EN_ATTENTE
+  VALIDE
+  LIVREE
+  ANNULEE
+}
+
 model Commande {
-  id_commande   String      @id
-  pieceId       String
+  id_commande   String         @id
   fournisseurId String
-  etat          String?
-  quantite      Int
-  prix_unite    Float
-  prix_total    Float
-  piece         Piece       @relation(fields: [pieceId], references: [id_piece]) // References Piece
-  fournisseur   Fournisseur @relation(fields: [fournisseurId], references: [id_fournisseur]) // References Fournisseur
+  etat          CommandeEtat?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  lines         CommandeLine[]
+  fournisseur   Fournisseur?   @relation(fields: [fournisseurId], references: [id_fournisseur])
+}
+
+model CommandeLine {
+  id_line    Int       @id @default(autoincrement())
+  commandeId String
+  pieceId    String
+  quantite   Int
+  prix_unite Float
+  prix_total Float
+  piece      Piece?    @relation(fields: [pieceId], references: [id_piece])
+  commande   Commande? @relation(fields: [commandeId], references: [id_commande])
 }
 
 model Fournisseur {
@@ -85,8 +97,9 @@ model Fournisseur {
 }
 
 model MarqueModel {
+  id     String @id
   marque String
   model  String
 
-  @@id([marque, model])
+  @@unique([marque, model])
 }

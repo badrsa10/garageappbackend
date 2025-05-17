@@ -155,7 +155,7 @@ export default async function handler(
       remarque,
     } = req.body;
 
-    if (!vehiculeId || !date_historique || (!pieceId && !serviceId)) {
+    if (!vehiculeId  || (!pieceId && !serviceId)) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -169,7 +169,6 @@ export default async function handler(
     // Validate data types
     if (
       typeof vehiculeId !== "string" ||
-      isNaN(Date.parse(date_historique)) ||
       (kilometrage !== undefined && typeof kilometrage !== "number") ||
       (pieceId !== null && typeof pieceId !== "string") ||
       (serviceId !== null && typeof serviceId !== "string")
