@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from '../../../lib/prisma'; 
+import prisma from "../../../lib/prisma";
 
 const generateHistoriqueId = async () => {
   const now = new Date();
@@ -65,25 +65,47 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ Disable caching
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
+  // ✅ Handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
   if (req.method === "GET") {
     const {
-      page = 1,
-      limit = 10,
+      page = "1",
+      limit = "10",
       search = [],
       sortBy = "date_historique",
       sortOrder = "asc",
+      vehiculeId,
     } = req.query;
 
     const pageNumber = parseInt(page as string, 10);
     const pageSize = parseInt(limit as string, 10);
-    const sortFields = [
+    const order = sortOrder === "desc" ? "desc" : "asc";
+
+    const validSortFields = [
       "date_historique",
       "libelle_pieceouservice",
       "pieceId",
       "serviceId",
       "vehiculeId",
     ];
-    const order = sortOrder === "desc" ? "desc" : "asc";
 
     if (
       isNaN(pageNumber) ||
@@ -94,7 +116,7 @@ export default async function handler(
       return res.status(400).json({ error: "Invalid pagination parameters" });
     }
 
-    if (!sortFields.includes(sortBy as string)) {
+    if (!validSortFields.includes(sortBy as string)) {
       return res.status(400).json({ error: "Invalid sortBy parameter" });
     }
 
@@ -104,19 +126,20 @@ export default async function handler(
         .map((term) => String(term).trim())
         .filter((term) => term.length > 0);
 
-      let filters = {};
+      const filters: any = {};
+
       if (searchTerms.length > 0) {
-        filters = {
-          OR: searchTerms.map((term) => ({
-            OR: [
-              {
-                libelle_pieceouservice: { contains: term, mode: "insensitive" },
-              },
-              { remarque: { contains: term, mode: "insensitive" } },
-              { vehiculeId: { contains: term, mode: "insensitive" } },
-            ],
-          })),
-        };
+        filters.OR = searchTerms.map((term) => ({
+          OR: [
+            { libelle_pieceouservice: { contains: term, mode: "insensitive" } },
+            { remarque: { contains: term, mode: "insensitive" } },
+            { vehiculeId: { contains: term, mode: "insensitive" } },
+          ],
+        }));
+      }
+
+      if (vehiculeId) {
+        filters.vehiculeId = String(vehiculeId);
       }
 
       const historiques = await prisma.vehiculeHistorique.findMany({
@@ -124,6 +147,11 @@ export default async function handler(
         orderBy: { [sortBy as string]: order },
         skip: (pageNumber - 1) * pageSize,
         take: pageSize,
+        include: {
+          vehicule: true,
+          service: true,
+          piece: true,
+        },
       });
 
       const totalHistoriques = await prisma.vehiculeHistorique.count({
@@ -155,7 +183,7 @@ export default async function handler(
       remarque,
     } = req.body;
 
-    if (!vehiculeId  || (!pieceId && !serviceId)) {
+    if (!vehiculeId || (!pieceId && !serviceId)) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 

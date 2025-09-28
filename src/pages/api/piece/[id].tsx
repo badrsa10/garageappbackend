@@ -1,63 +1,65 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from '../../../lib/prisma'; 
+import prisma from "../../../lib/prisma";
 
-// Handler for managing a specific piece by id
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  // ✅ CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  // Handle GET requests to fetch a specific piece
-  if (req.method === "GET") {
-    try {
-      const piece = await prisma.piece.findUnique({
-        where: { id_piece: String(id) },
-      });
-
-      if (!piece) return res.status(404).json({ error: "Piece not found" });
-
-      return res.status(200).json(piece);
-    } catch (error) {
-      console.error("Error details:", error);
-      return res.status(500).json({ error: "Something went wrong" });
-    }
+  // ✅ Handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
   }
 
-  // Handle PUT requests to update a specific piece
-  else if (req.method === "PUT") {
-    const { libelle, quantite } = req.body;
+  const { id } = req.query;
+  if (!id || typeof id !== "string") {
+    return res.status(400).json({ error: "Invalid or missing id" });
+  }
 
-    if (!libelle || !quantite) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
+  try {
+    if (req.method === "GET") {
+      const piece = await prisma.piece.findUnique({
+        where: { id_piece: id },
+      });
+      if (!piece) {
+        return res.status(404).json({ error: "Piece not found" });
+      }
+      return res.status(200).json({ data: piece });
+    } else if (req.method === "PUT") {
+      const { libelle, quantite } = req.body;
 
-    try {
+      // Build update object dynamically
+      const updateData: any = {};
+      if (typeof libelle === "string") updateData.libelle = libelle;
+      if (typeof quantite === "number") updateData.quantite = quantite;
+
+      if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({ error: "No valid fields to update" });
+      }
+
       const updatedPiece = await prisma.piece.update({
         where: { id_piece: String(id) },
-        data: { libelle, quantite },
+        data: updateData,
       });
 
-      return res.status(200).json(updatedPiece);
-    } catch (error) {
-      console.error("Error details:", error);
-      return res.status(500).json({ error: "Something went wrong" });
-    }
-  }
-
-  // Handle DELETE requests to remove a specific piece
-  else if (req.method === "DELETE") {
-    try {
+      return res.status(200).json({ data: updatedPiece });
+    } else if (req.method === "DELETE") {
       await prisma.piece.delete({
-        where: { id_piece: String(id) },
+        where: { id_piece: id },
       });
-
-      return res.status(204).end(); // No Content
-    } catch (error) {
-      console.error("Error details:", error);
-      return res.status(500).json({ error: "Something went wrong" });
+      return res.status(200).json({ success: true });
+    } else {
+      return res.status(405).json({ error: "Method Not Allowed" });
     }
-  }
-
-  // Method Not Allowed
-  else {
-    return res.status(405).json({ error: "Method Not Allowed" });
+  } catch (error) {
+    console.error("Error details:", error);
+    return res.status(500).json({ error: "Something went wrong" });
   }
 }

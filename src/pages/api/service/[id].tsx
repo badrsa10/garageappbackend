@@ -1,7 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from '../../../lib/prisma'; 
+import prisma from "../../../lib/prisma";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  // ✅ CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ Handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   const { id } = req.query;
 
   // Handle GET requests to fetch a specific service
@@ -28,7 +44,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Validate if the required field is provided
     if (!libelle) {
-      return res.status(400).json({ error: "Missing required field 'libelle'" });
+      return res
+        .status(400)
+        .json({ error: "Missing required field 'libelle'" });
     }
 
     try {
@@ -39,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(200).json(updatedService);
     } catch (error) {
-      console.error("Error details:", JSON.stringify(error,null,4));
+      console.error("Error details:", JSON.stringify(error, null, 4));
       return res.status(500).json({ error: "Failed to update service" });
     }
   }

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from '../../../lib/prisma'; 
+import prisma from "../../../lib/prisma";
 
 // Function to generate the service id
 const generateServiceId = async () => {
@@ -35,8 +35,28 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ Disable caching
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
+  // ✅ Handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
   // Handle GET requests to fetch service data with pagination and filters
-  if (req.method === "GET") {
+  else if (req.method === "GET") {
     const {
       page = 1,
       limit = 10,
@@ -70,7 +90,7 @@ export default async function handler(
       const filters = search
         ? {
             libelle: {
-              contains: String(search)
+              contains: String(search),
             },
           }
         : {};
@@ -98,7 +118,7 @@ export default async function handler(
         },
       });
     } catch (error) {
-      console.error("Error details:", JSON.stringify(error,null,2));
+      console.error("Error details:", JSON.stringify(error, null, 2));
       return res.status(500).json({ error: "Something went wrong" });
     }
   }

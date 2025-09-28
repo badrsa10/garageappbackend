@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from '../../../lib/prisma'; 
+import prisma from "../../../lib/prisma";
 
 // Function to generate the id_piece
 const generatePieceId = async () => {
@@ -31,10 +31,39 @@ const generatePieceId = async () => {
 };
 
 // GET function to retrieve piece data
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  // CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ Disable caching
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
+  // ✅ Handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
   // Handle GET requests to fetch piece data
-  if (req.method === "GET") {
-    const { page = 1, limit = 10, search = [], sortBy = "libelle", sortOrder = "asc" } = req.query;
+  else if (req.method === "GET") {
+    const {
+      page = 1,
+      limit = 10,
+      search = [],
+      sortBy = "libelle",
+      sortOrder = "asc",
+    } = req.query;
 
     const pageNumber = parseInt(page as string, 10);
     const pageSize = parseInt(limit as string, 10);
@@ -42,7 +71,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const order = sortOrder === "desc" ? "desc" : "asc";
 
     // Validate pagination parameters
-    if (isNaN(pageNumber) || isNaN(pageSize) || pageNumber < 1 || pageSize < 1) {
+    if (
+      isNaN(pageNumber) ||
+      isNaN(pageSize) ||
+      pageNumber < 1 ||
+      pageSize < 1
+    ) {
       return res.status(400).json({ error: "Invalid pagination parameters" });
     }
 
@@ -53,16 +87,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       let searchTerms = Array.isArray(search) ? search : [search];
-      searchTerms = searchTerms.map((term) => String(term).trim()).filter((term) => term.length > 0);
+      searchTerms = searchTerms
+        .map((term) => String(term).trim())
+        .filter((term) => term.length > 0);
 
       // Construct dynamic filter based on search query
       let filters = {};
       if (searchTerms.length > 0) {
         filters = {
           OR: searchTerms.map((term) => ({
-            OR: [
-              { libelle: { contains: term } },
-            ],
+            OR: [{ libelle: { contains: term } }],
           })),
         };
       }
@@ -106,6 +140,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
+      // ✅ Check if a piece with the same libelle already exists (case-insensitive)
+      const existingPiece = await prisma.piece.findFirst({
+        where: {
+          libelle: {
+            equals: libelle,
+            mode: "insensitive", // ignores case
+          },
+        },
+      });
+
+      if (existingPiece) {
+        return res
+          .status(409)
+          .json({ error: "A piece with this libelle already exists" });
+      }
+
       // Generate the id_piece using the generatePieceId function
       const id_piece = await generatePieceId();
       console.log("Generated id_piece:", id_piece);

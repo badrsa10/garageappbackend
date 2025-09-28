@@ -31,8 +31,29 @@ const generateClientId = async () => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+  // CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ Disable caching
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
+  // ✅ Handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
   //GET
-  if (req.method === "GET") {
+  else if (req.method === "GET") {
 
     const { page = 1, limit = 10, search = [], sortBy = "nom", sortOrder = "asc" } = req.query;
 
@@ -126,7 +147,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           email,
           tel,
           type_personne,
-          vehiculeId: vehiculeId || null, // Associate the client with a vehicle, if provided
+          //vehiculeId: vehiculeId || null, // Associate the client with a vehicle, if provided
         },
       });
 
