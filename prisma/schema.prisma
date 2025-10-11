@@ -96,7 +96,7 @@ model Fournisseur {
 }
 
 model MarqueModel {
-  id     String @id
+  id     String  @id @default(cuid())
   marque String
   model  String
 

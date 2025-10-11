@@ -1,8 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../lib/prisma';
+import { Prisma } from '@prisma/client'; // en haut du fichier
 
 // Function to handle API requests for marque models
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+
   const { page = '1', limit = '10', search = '', sortBy = 'marque', sortOrder = 'asc' } = req.query;
 
   const pageNumber = parseInt(page as string, 10);
@@ -20,14 +23,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid sortBy parameter' });
   }
 
+  // CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ Disable caching
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
+  // ✅ Handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   // Handle GET request to fetch marque model data
   if (req.method === 'GET') {
     try {
       // Construct dynamic filter based on search query
       const filters = search ? {
         OR: [
-          { marque: { contains: String(search) } },
-          { model: { contains: String(search) } },
+          { marque: { contains: String(search), mode: Prisma.QueryMode.insensitive } },
+          { model: { contains: String(search), mode: Prisma.QueryMode.insensitive } },
         ],
       } : {};
 
