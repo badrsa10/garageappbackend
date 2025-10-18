@@ -33,7 +33,7 @@ const generateClientId = async () => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.setHeader("Access-Control-Allow-Origin", "http://167.99.90.103:4200");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS"
