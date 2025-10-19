@@ -7,14 +7,13 @@ interface RootLayoutProps {
   children: ReactNode;
 }
 
-const RootLayout = ({ children }: RootLayoutProps) => {
+function Page() {
   return (
-    <html>
-      <body>
-        <Layout>{children}</Layout>
-      </body>
-    </html>
+    <main>
+      <h1>Garage App</h1>
+    </main>
   );
-};
+}
 
-export default RootLayout;
+
+export default Page();
