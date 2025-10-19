@@ -3,17 +3,12 @@
 import { ReactNode } from "react";
 import Layout from "./layout";
 
-interface RootLayoutProps {
-  children: ReactNode;
-}
-
-function Page() {
+export default function Page() {
   return (
     <main>
       <h1>Garage App</h1>
+      <p>Welcome to your dashboard.</p>
     </main>
   );
 }
 
-
-export default Page();
