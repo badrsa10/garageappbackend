@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../lib/prisma"; // Adjust the path to your Prisma setup
+import prisma from "../../../src/lib/prisma"; // Adjust the path to your Prisma setup
 
 export default async function handler(
   req: NextApiRequest,

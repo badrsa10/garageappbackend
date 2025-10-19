@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../lib/prisma";
+import prisma from "../../../src/lib/prisma";
 
 // Function to generate the id_piece
 const generatePieceId = async () => {
