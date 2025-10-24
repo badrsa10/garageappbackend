@@ -124,7 +124,8 @@ export default async function handler(
         },
       });
     } catch (error) {
-      console.error("Error details:", error);
+      console.error("Error details:", JSON.stringify(error, null, 4));
+      console.log("Error details:", JSON.stringify(error, null, 4));
       return res.status(500).json({ error: "Something went wrong" });
     }
   }
