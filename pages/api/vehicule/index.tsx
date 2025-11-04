@@ -156,7 +156,7 @@ export default async function handler(
   }
   // POST
   else if (req.method === "POST") {
-  const { marque, modele, annee, kilometrage, matricule, numeroSerie } = req.body;
+  const { marque, modele, annee, kilometrage, matricule, numeroSerie, clientId } = req.body;
 
   if (!marque || !modele || !annee || !kilometrage || !matricule || !numeroSerie) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -186,6 +186,7 @@ export default async function handler(
         kilometrage: Number(kilometrage),
         matricule,
         numeroSerie,
+        clientId: clientId || null, // ✅ include this line
       },
     });
 
