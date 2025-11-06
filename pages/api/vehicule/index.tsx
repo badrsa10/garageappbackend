@@ -131,10 +131,10 @@ export default async function handler(
         orderBy: { [sortBy as string]: order },
         skip: (pageNumber - 1) * pageSize,
         take: pageSize,
-        //include: { Client: true },
+        include: { client: true },
       });
 
-      //console.log(JSON.stringify(vehicules, null, 4));
+      console.log(JSON.stringify(vehicules, null, 4));
 
       const totalVehicules = await prisma.vehicule.count({ where: filters });
       //console.log(totalVehicules);
@@ -163,6 +163,7 @@ export default async function handler(
   }
 
   try {
+    console.log("req.body:", JSON.stringify(req.body, null, 2));
     // 🔍 Check if marque + modele exists in marqueModel table
     const exists = await prisma.marqueModel.findFirst({
       where: {
@@ -186,10 +187,10 @@ export default async function handler(
         kilometrage: Number(kilometrage),
         matricule,
         numeroSerie,
-        clientId: clientId || null, // ✅ include this line
+        clientId: clientId && typeof clientId === 'string' ? clientId : null
       },
     });
-
+    console.log("newVehicule:", JSON.stringify(newVehicule, null, 2));
     return res.status(201).json(newVehicule);
   } catch (error) {
     console.error("Error details:", error);
