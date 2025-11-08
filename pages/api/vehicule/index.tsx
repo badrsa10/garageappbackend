@@ -121,11 +121,11 @@ export default async function handler(
         andConditions.push({
           OR: searchTerms.map((term) => ({
             OR: [
-              { marque: { contains: term, mode: "insensitive" } },
-              { modele: { contains: term, mode: "insensitive" } },
-              { matricule: { contains: term, mode: "insensitive" } },
-              { numeroSerie: { contains: term, mode: "insensitive" } },
-              { clientId: { contains: term, mode: "insensitive" } },
+              { marque: { contains: term } },
+              { modele: { contains: term } },
+              { matricule: { contains: term } },
+              { numeroSerie: { contains: term} },
+              { clientId: { contains: term} },
             ],
           })),
         });
