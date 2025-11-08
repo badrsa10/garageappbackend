@@ -111,28 +111,20 @@ export default async function handler(
       // **Build Prisma Filters**
       let filters: Prisma.VehiculeWhereInput = {};
 
-      const andConditions: Prisma.VehiculeWhereInput[] = [];
-
       if (clientId) {
-        andConditions.push({ clientId: String(clientId) });
+        filters.clientId = String(clientId);
       }
 
       if (searchTerms.length > 0) {
-        andConditions.push({
-          OR: searchTerms.map((term) => ({
-            OR: [
-              { marque: { contains: term } },
-              { modele: { contains: term } },
-              { matricule: { contains: term } },
-              { numeroSerie: { contains: term} },
-              { clientId: { contains: term} },
-            ],
-          })),
-        });
-      }
-
-      if (andConditions.length > 0) {
-        filters.AND = andConditions;
+        filters.OR = searchTerms.map((term) => ({
+          OR: [
+            { marque: { contains: term } },
+            { modele: { contains: term } },
+            { matricule: { contains: term } },
+            { numeroSerie: { contains: term} },
+            { clientId: { contains: term} },
+          ],
+        }));
       }
 
       console.log("Final filters:", JSON.stringify(filters, null, 2));
