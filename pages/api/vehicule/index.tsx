@@ -68,8 +68,8 @@ export default async function handler(
       search = [],
       sortBy = "marque",
       sortOrder = "asc",
-      clientId,
     } = req.query;
+    const { clientId } = req.query;
 
     //console.log(req.query);
     const pageNumber = parseInt(page as string, 10);
@@ -121,14 +121,14 @@ export default async function handler(
             { marque: { contains: term } },
             { modele: { contains: term } },
             { matricule: { contains: term } },
-            { numeroSerie: { contains: term} },
-            { clientId: { contains: term} },
+            { numeroSerie: { contains: term } },
+            { clientId: { contains: term } },
           ],
         }));
       }
 
       console.log("Final filters:", JSON.stringify(filters, null, 2));
-      //console.log(JSON.stringify(filters, null, 4));
+      console.log(JSON.stringify(filters, null, 4));
       //console.log(new Date());
       const vehicules = await prisma.vehicule.findMany({
         //where: { OR: [{ marque: String("Audi") }, { marque: String("Kia") }] },
