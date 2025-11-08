@@ -30,15 +30,28 @@ export default async function handler(
   try {
     // GET: Fetch a specific vehicle
     if (req.method === "GET") {
-      const vehicule = await prisma.vehicule.findUnique({
-        where: { id_vehicule: String(id) },
-        include: { client: true, VehiculeHistorique: true },
-      });
+      const { id, clientId } = req.query;
 
-      if (!vehicule)
-        return res.status(404).json({ error: "Vehicule not found" });
+      if (id) {
+        const vehicule = await prisma.vehicule.findUnique({
+          where: { id_vehicule: String(id) },
+          include: { client: true},
+        });
 
-      return res.status(200).json(vehicule);
+        if (!vehicule)
+          return res.status(404).json({ error: "Vehicule not found" });
+
+        return res.status(200).json(vehicule);
+      }
+
+      if (clientId) {
+        const vehicules = await prisma.vehicule.findMany({
+          where: { clientId: String(clientId) },
+          include: { client: true},
+        });
+
+        return res.status(200).json({ data: vehicules });
+      }
     }
 
     // PUT: Update a specific vehicle
