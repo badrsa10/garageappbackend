@@ -108,6 +108,8 @@ export default async function handler(
         .map((term) => String(term).trim())
         .filter((term) => term.length > 0);
 
+      console.log("Query clientId:", req.query.clientId);
+
       // **Build Prisma Filters**
       let filters: Prisma.VehiculeWhereInput = {};
 
