@@ -68,6 +68,7 @@ export default async function handler(
       search = [],
       sortBy = "marque",
       sortOrder = "asc",
+      clientId,
     } = req.query;
 
     //console.log(req.query);
@@ -118,6 +119,8 @@ export default async function handler(
               { modele: { contains: term } },
               { matricule: { contains: term } },
               { numeroSerie: { contains: term } },
+              { clientId: { contains: term } },
+
             ],
           })),
         };
@@ -156,48 +159,67 @@ export default async function handler(
   }
   // POST
   else if (req.method === "POST") {
-  const { marque, modele, annee, kilometrage, matricule, numeroSerie, clientId } = req.body;
+    const {
+      marque,
+      modele,
+      annee,
+      kilometrage,
+      matricule,
+      numeroSerie,
+      clientId,
+    } = req.body;
 
-  if (!marque || !modele || !annee || !kilometrage || !matricule || !numeroSerie) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-
-  try {
-    console.log("req.body:", JSON.stringify(req.body, null, 2));
-    // 🔍 Check if marque + modele exists in marqueModel table
-    const exists = await prisma.marqueModel.findFirst({
-      where: {
-        marque: { equals: marque, mode: Prisma.QueryMode.insensitive },
-        model: { equals: modele, mode: Prisma.QueryMode.insensitive }
-      }
-    });
-
-    if (!exists) {
-      return res.status(400).json({ error: "Marque and modele combination does not exist in marqueModel table" });
+    if (
+      !marque ||
+      !modele ||
+      !annee ||
+      !kilometrage ||
+      !matricule ||
+      !numeroSerie
+    ) {
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const id_vehicule = await generateVehiculeId();
+    try {
+      console.log("req.body:", JSON.stringify(req.body, null, 2));
+      // 🔍 Check if marque + modele exists in marqueModel table
+      const exists = await prisma.marqueModel.findFirst({
+        where: {
+          marque: { equals: marque, mode: Prisma.QueryMode.insensitive },
+          model: { equals: modele, mode: Prisma.QueryMode.insensitive },
+        },
+      });
 
-    const newVehicule = await prisma.vehicule.create({
-      data: {
-        id_vehicule,
-        marque,
-        modele,
-        annee: Number(annee),
-        kilometrage: Number(kilometrage),
-        matricule,
-        numeroSerie,
-        clientId: clientId && typeof clientId === 'string' ? clientId : null
-      },
-    });
-    console.log("newVehicule:", JSON.stringify(newVehicule, null, 2));
-    return res.status(201).json(newVehicule);
-  } catch (error) {
-    console.error("Error details:", error);
-    return res.status(500).json({ error: "Failed to create vehicle" });
-  }
-}
- else {
+      if (!exists) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Marque and modele combination does not exist in marqueModel table",
+          });
+      }
+
+      const id_vehicule = await generateVehiculeId();
+
+      const newVehicule = await prisma.vehicule.create({
+        data: {
+          id_vehicule,
+          marque,
+          modele,
+          annee: Number(annee),
+          kilometrage: Number(kilometrage),
+          matricule,
+          numeroSerie,
+          clientId: clientId && typeof clientId === "string" ? clientId : null,
+        },
+      });
+      console.log("newVehicule:", JSON.stringify(newVehicule, null, 2));
+      return res.status(201).json(newVehicule);
+    } catch (error) {
+      console.error("Error details:", error);
+      return res.status(500).json({ error: "Failed to create vehicle" });
+    }
+  } else {
     return res.status(405).end(); // Method Not Allowed
   }
 }
