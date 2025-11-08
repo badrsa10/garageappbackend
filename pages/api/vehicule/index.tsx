@@ -109,22 +109,32 @@ export default async function handler(
         .filter((term) => term.length > 0);
 
       // **Build Prisma Filters**
-      let filters = {};
+      let filters: Prisma.VehiculeWhereInput = {};
+
+      const andConditions: Prisma.VehiculeWhereInput[] = [];
+
+      if (clientId) {
+        andConditions.push({ clientId: String(clientId) });
+      }
 
       if (searchTerms.length > 0) {
-        filters = {
+        andConditions.push({
           OR: searchTerms.map((term) => ({
             OR: [
-              { marque: { contains: term } },
-              { modele: { contains: term } },
-              { matricule: { contains: term } },
-              { numeroSerie: { contains: term } },
-              { clientId: { contains: term } },
-
+              { marque: { contains: term, mode: "insensitive" } },
+              { modele: { contains: term, mode: "insensitive" } },
+              { matricule: { contains: term, mode: "insensitive" } },
+              { numeroSerie: { contains: term, mode: "insensitive" } },
+              { clientId: { contains: term, mode: "insensitive" } },
             ],
           })),
-        };
+        });
       }
+
+      if (andConditions.length > 0) {
+        filters.AND = andConditions;
+      }
+
       console.log("Final filters:", JSON.stringify(filters, null, 2));
       //console.log(JSON.stringify(filters, null, 4));
       //console.log(new Date());
@@ -191,12 +201,10 @@ export default async function handler(
       });
 
       if (!exists) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Marque and modele combination does not exist in marqueModel table",
-          });
+        return res.status(400).json({
+          error:
+            "Marque and modele combination does not exist in marqueModel table",
+        });
       }
 
       const id_vehicule = await generateVehiculeId();
