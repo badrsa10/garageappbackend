@@ -113,16 +113,16 @@ export default async function handler(
       // **Build Prisma Filters**
       let filters: Prisma.VehiculeWhereInput = {};
 
-      const rawClientId = Array.isArray(req.query.clientId)
-        ? req.query.clientId[0]
-        : req.query.clientId;
+      //const rawClientId = Array.isArray(req.query.clientId)
+      //  ? req.query.clientId[0]
+      //  : req.query.clientId;
 
-      const clientId = rawClientId ? String(rawClientId).trim() : null;
+      //const clientId = rawClientId ? String(rawClientId).trim() : null;
 
-      if (clientId) {
-        filters.clientId = clientId;
-        console.log("Filters.clientId ",JSON.stringify(filters.clientId, null, 4));
+      if (req.query.clientId) {
+        filters.clientId = String(req.query.clientId);
       }
+      console.log("Filters.clientId ",JSON.stringify(filters.clientId, null, 4));
 
       if (searchTerms.length > 0) {
         filters.OR = searchTerms.map((term) => ({
