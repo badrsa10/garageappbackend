@@ -55,27 +55,19 @@ export default async function handler(
   }
   // GET
   if (req.method === "GET") {
-    /*const { page = 1, limit = 10, search = [], sortBy = 'marque', sortOrder = 'asc' } = req.query;
-
-    console.log(req.query);
-    const searchTerm = Array.isArray(search) ? search : [search];
-    console.log(typeof searchTerm);
-    return res.status(200).json({ error: 'wakha 3la mok' });*/
-
     const {
       page = 1,
       limit = 10,
       search = [],
       sortBy = "marque",
       sortOrder = "asc",
+      clientId,
     } = req.query;
-    const { clientId } = req.query;
 
-    //console.log(req.query);
     const pageNumber = parseInt(page as string, 10);
     const pageSize = parseInt(limit as string, 10);
-    //const searchTerm = search ? (Array.isArray(search) ? search.join(" ") : String(search)) : '';
-    //console.log(search);
+    const order = sortOrder === "desc" ? "desc" : "asc";
+
     const sortFields = [
       "marque",
       "modele",
@@ -84,7 +76,6 @@ export default async function handler(
       "matricule",
       "numeroSerie",
     ];
-    const order = sortOrder === "desc" ? "desc" : "asc";
 
     if (
       isNaN(pageNumber) ||
@@ -96,50 +87,46 @@ export default async function handler(
     }
 
     if (!sortFields.includes(sortBy as string)) {
-      console.log("sort field ", sortBy);
       return res.status(400).json({ error: "Invalid sortBy parameter" });
     }
-    try {
-      // **Parse and Clean Up 'search' Parameter**
-      let searchTerms = Array.isArray(search) ? search : [search];
 
-      // Ensure all terms are strings and trim whitespace
+    try {
+      // Normalize search terms
+      let searchTerms = Array.isArray(search) ? search : [search];
       searchTerms = searchTerms
         .map((term) => String(term).trim())
         .filter((term) => term.length > 0);
 
-      console.log("Query clientId:", req.query.clientId);
+      // Build filters
+      const filters: Prisma.VehiculeWhereInput = {};
 
-      // **Build Prisma Filters**
-      let filters: Prisma.VehiculeWhereInput = {};
+      const andConditions: Prisma.VehiculeWhereInput[] = [];
 
-      //const rawClientId = Array.isArray(req.query.clientId)
-      //  ? req.query.clientId[0]
-      //  : req.query.clientId;
-
-      //const clientId = rawClientId ? String(rawClientId).trim() : null;
-
-      if (req.query.clientId) {
-        filters.clientId = String(req.query.clientId);
+      if (clientId) {
+        andConditions.push({ clientId: String(clientId) });
       }
-      console.log("Filters.clientId ",JSON.stringify(filters.clientId, null, 4));
 
       if (searchTerms.length > 0) {
-        filters.OR = searchTerms.map((term) => ({
-          OR: [
-            { marque: { contains: term, mode: "insensitive" } },
-            { modele: { contains: term, mode: "insensitive" } },
-            { matricule: { contains: term, mode: "insensitive" } },
-            { numeroSerie: { contains: term, mode: "insensitive" } },
-          ],
-        }));
+        andConditions.push({
+          OR: searchTerms.map((term) => ({
+            OR: [
+              { marque: { contains: term, mode: "insensitive" } },
+              { modele: { contains: term, mode: "insensitive" } },
+              { matricule: { contains: term, mode: "insensitive" } },
+              { numeroSerie: { contains: term, mode: "insensitive" } },
+              { clientId: { contains: term, mode: "insensitive" } }, // ✅ searchable clientId
+            ],
+          })),
+        });
+      }
+
+      if (andConditions.length > 0) {
+        filters.AND = andConditions;
       }
 
       console.log("Final filters:", JSON.stringify(filters, null, 2));
-      console.log(JSON.stringify(filters, null, 4));
-      //console.log(new Date());
+
       const vehicules = await prisma.vehicule.findMany({
-        //where: { OR: [{ marque: String("Audi") }, { marque: String("Kia") }] },
         where: filters,
         orderBy: { [sortBy as string]: order },
         skip: (pageNumber - 1) * pageSize,
@@ -147,12 +134,9 @@ export default async function handler(
         include: { client: true },
       });
 
-      console.log(JSON.stringify(vehicules, null, 4));
-
       const totalVehicules = await prisma.vehicule.count({ where: filters });
-      //console.log(totalVehicules);
       const totalPages = Math.ceil(totalVehicules / pageSize);
-      //console.log(totalPages);
+
       return res.status(200).json({
         data: vehicules,
         meta: {
@@ -167,6 +151,7 @@ export default async function handler(
       return res.status(500).json({ error: "Something went wrong" });
     }
   }
+
   // POST
   else if (req.method === "POST") {
     const {
