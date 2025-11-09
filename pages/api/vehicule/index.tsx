@@ -61,6 +61,7 @@ export default async function handler(
       search = [],
       sortBy = "marque",
       sortOrder = "asc",
+      clientId,
     } = req.query;
 
     const pageNumber = parseInt(page as string, 10);
@@ -74,7 +75,6 @@ export default async function handler(
       "kilometrage",
       "matricule",
       "numeroSerie",
-      "clientId"
     ];
 
     if (
@@ -93,16 +93,21 @@ export default async function handler(
     try {
       // Normalize search terms
       let searchTerms = Array.isArray(search) ? search : [search];
-      console.log("SearchTerms :", JSON.stringify(searchTerms, null, 2));
       searchTerms = searchTerms
         .map((term) => String(term).trim())
         .filter((term) => term.length > 0);
 
       // Build filters
-      let filters = {};
+      const filters: Prisma.VehiculeWhereInput = {};
+
+      const andConditions: Prisma.VehiculeWhereInput[] = [];
+
+      if (clientId) {
+        andConditions.push({ clientId: String(clientId) });
+      }
 
       if (searchTerms.length > 0) {
-        filters = {
+        andConditions.push({
           OR: searchTerms.map((term) => ({
             OR: [
               { marque: { contains: term, mode: "insensitive" } },
@@ -112,7 +117,11 @@ export default async function handler(
               { clientId: { contains: term, mode: "insensitive" } }, // ✅ searchable clientId
             ],
           })),
-        };
+        });
+      }
+
+      if (andConditions.length > 0) {
+        filters.AND = andConditions;
       }
 
       console.log("Final filters:", JSON.stringify(filters, null, 2));
