@@ -98,16 +98,10 @@ export default async function handler(
         .filter((term) => term.length > 0);
 
       // Build filters
-      const filters: Prisma.VehiculeWhereInput = {};
-
-      const andConditions: Prisma.VehiculeWhereInput[] = [];
-
-      if (clientId) {
-        andConditions.push({ clientId: String(clientId) });
-      }
+      let filters = {};
 
       if (searchTerms.length > 0) {
-        andConditions.push({
+        filters = {
           OR: searchTerms.map((term) => ({
             OR: [
               { marque: { contains: term, mode: "insensitive" } },
@@ -117,11 +111,7 @@ export default async function handler(
               { clientId: { contains: term, mode: "insensitive" } }, // ✅ searchable clientId
             ],
           })),
-        });
-      }
-
-      if (andConditions.length > 0) {
-        filters.AND = andConditions;
+        };
       }
 
       console.log("Final filters:", JSON.stringify(filters, null, 2));
