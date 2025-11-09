@@ -113,18 +113,24 @@ export default async function handler(
       // **Build Prisma Filters**
       let filters: Prisma.VehiculeWhereInput = {};
 
+      const rawClientId = Array.isArray(req.query.clientId)
+        ? req.query.clientId[0]
+        : req.query.clientId;
+
+      const clientId = rawClientId ? String(rawClientId).trim() : null;
+
       if (clientId) {
-        filters.clientId = String(clientId);
+        filters.clientId = clientId;
+        console.log("Filters.clientId ",JSON.stringify(filters.clientId, null, 4));
       }
 
       if (searchTerms.length > 0) {
         filters.OR = searchTerms.map((term) => ({
           OR: [
-            { marque: { contains: term } },
-            { modele: { contains: term } },
-            { matricule: { contains: term } },
-            { numeroSerie: { contains: term } },
-            { clientId: { contains: term } },
+            { marque: { contains: term, mode: "insensitive" } },
+            { modele: { contains: term, mode: "insensitive" } },
+            { matricule: { contains: term, mode: "insensitive" } },
+            { numeroSerie: { contains: term, mode: "insensitive" } },
           ],
         }));
       }
