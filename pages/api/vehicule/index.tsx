@@ -61,7 +61,6 @@ export default async function handler(
       search = [],
       sortBy = "marque",
       sortOrder = "asc",
-      clientId,
     } = req.query;
 
     const pageNumber = parseInt(page as string, 10);
@@ -75,6 +74,7 @@ export default async function handler(
       "kilometrage",
       "matricule",
       "numeroSerie",
+      "clientId"
     ];
 
     if (
@@ -93,6 +93,7 @@ export default async function handler(
     try {
       // Normalize search terms
       let searchTerms = Array.isArray(search) ? search : [search];
+      console.log("SearchTerms :", JSON.stringify(searchTerms, null, 2));
       searchTerms = searchTerms
         .map((term) => String(term).trim())
         .filter((term) => term.length > 0);
