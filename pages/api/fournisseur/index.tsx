@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from '../../../src/lib/prisma'; 
+import prisma from "../../../src/lib/prisma";
 
 // Function to generate the id_fournisseur
 const generateFournisseurId = async () => {
@@ -22,7 +22,10 @@ const generateFournisseurId = async () => {
 
   let increment = 1;
   if (lastFournisseur.length > 0) {
-    console.log("Last Fournisseur : ", JSON.stringify(lastFournisseur, null, 4));
+    console.log(
+      "Last Fournisseur : ",
+      JSON.stringify(lastFournisseur, null, 4)
+    );
     const lastId = lastFournisseur[0].id_fournisseur;
     const lastIncrement = parseInt(lastId.slice(-4), 10);
     increment = lastIncrement + 1;
@@ -32,10 +35,39 @@ const generateFournisseurId = async () => {
 };
 
 // GET function to retrieve fournisseur data
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  // CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "http://161.35.45.86");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ Disable caching
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
+  // ✅ Handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
   // Handle GET requests to fetch fournisseur data
   if (req.method === "GET") {
-    const { page = 1, limit = 10, search = [], sortBy = "nom", sortOrder = "asc" } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = [],
+      sortBy = "nom",
+      sortOrder = "asc",
+    } = req.query;
 
     const pageNumber = parseInt(page as string, 10);
     const pageSize = parseInt(limit as string, 10);
@@ -43,7 +75,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const order = sortOrder === "desc" ? "desc" : "asc";
 
     // Validate pagination parameters
-    if (isNaN(pageNumber) || isNaN(pageSize) || pageNumber < 1 || pageSize < 1) {
+    if (
+      isNaN(pageNumber) ||
+      isNaN(pageSize) ||
+      pageNumber < 1 ||
+      pageSize < 1
+    ) {
       return res.status(400).json({ error: "Invalid pagination parameters" });
     }
 
@@ -54,7 +91,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       let searchTerms = Array.isArray(search) ? search : [search];
-      searchTerms = searchTerms.map((term) => String(term).trim()).filter((term) => term.length > 0);
+      searchTerms = searchTerms
+        .map((term) => String(term).trim())
+        .filter((term) => term.length > 0);
 
       // Construct dynamic filter based on search query
       let filters = {};
@@ -80,7 +119,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       // Count the total number of fournisseurs for pagination metadata
-      const totalFournisseurs = await prisma.fournisseur.count({ where: filters });
+      const totalFournisseurs = await prisma.fournisseur.count({
+        where: filters,
+      });
       const totalPages = Math.ceil(totalFournisseurs / pageSize);
 
       // Return the data and pagination meta-information
@@ -126,7 +167,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
 
-      console.log("New Fournisseur : ", JSON.stringify(newFournisseur, null, 4));
+      console.log(
+        "New Fournisseur : ",
+        JSON.stringify(newFournisseur, null, 4)
+      );
 
       // Return the newly created fournisseur with the auto-generated ID
       return res.status(201).json(newFournisseur);
