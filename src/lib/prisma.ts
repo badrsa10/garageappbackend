@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
-export const prisma = new PrismaClient(); 
-// ⚠️ inutile de repasser datasources ici, car déjà défini via schema/env
+const prisma = new PrismaClient();
+export default prisma;

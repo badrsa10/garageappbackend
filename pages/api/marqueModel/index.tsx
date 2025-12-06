@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from "../../../src/lib/prisma";
-
-import { Prisma } from '@prisma/client'; // en haut du fichier
+import prisma from "../../../src/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 // Function to handle API requests for marque models
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
