@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../src/lib/prisma";
-import { Prisma } from "@prisma/client";
-
+import Prisma from "@prisma/client";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "http://161.35.45.86");

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../src/lib/prisma";
-import { Prisma } from "@prisma/client";
+import {Prisma} from "@prisma/client";
 
 const generateVehiculeId = async () => {
   const now = new Date();
